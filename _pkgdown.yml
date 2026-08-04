@@ -1,0 +1,31 @@
+url: https://ehsanrahimi666.github.io/svid/
+template:
+  bootstrap: 5
+reference:
+- title: Inputs
+  contents: [svid_sensor, svid_sensors, svid_bands, svid_cube, svid_cube_dates,
+             svid_samples, svid_extract, svid_from_table]
+- title: Generating candidates
+  contents: [svid_grammar, svid_grammar_size, svid_generate, svid_catalog,
+             svid_eval, svid_temporal]
+- title: Redundancy reduction
+  contents: [svid_canonicalize, svid_screen, svid_dedupe, svid_equivalence,
+             svid_prune, svid_redundancy]
+- title: Screening
+  contents: [svid_separability, svid_shortlist]
+- title: Per-class discovery
+  contents: [svid_per_class, svid_specialists, svid_ensemble]
+- title: Evaluation
+  contents: [svid_resample, svid_learner, svid_evaluate, svid_baseline, svid_regress]
+- title: Inference
+  contents: [svid_ci, svid_compare, svid_tied, svid_stability, svid_optimism]
+- title: Robustness
+  contents: [svid_perturb, svid_transfer, svid_cross_sensor, svid_prosail]
+- title: Guided search
+  contents: [svid_search, svid_beam, svid_pareto]
+- title: Mapping
+  contents: [svid_map, svid_predict, svid_index_raster, svid_area, svid_disagree]
+- title: Graphics and reporting
+  contents: [starts_with("svid_plot"), svid_result, svid_report, svid_export]
+- title: Data and simulation
+  contents: [cerrado, andong, asi_indices, svid_simulate, svid_demo_data]

@@ -1,0 +1,67 @@
+---
+title: "Why index pools must be deduplicated before ranking"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Why index pools must be deduplicated before ranking}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 4, dpi = 110)
+```
+
+```{r}
+library(svid)
+```
+
+## Two kinds of redundancy
+
+**Algebraic identity.** Different strings, one rational function.
+
+```{r}
+e <- c("(N / B) / R", "(N / R) / B", "N / (B * R)", "(B * R) / N")
+data.frame(expression = e, canonical = svid_canonicalize(e))
+```
+
+The first three collapse. The fourth is the reciprocal and is a genuinely
+different function — but not a different *feature* for a rank-based learner.
+
+**Monotone equivalence.** That is what the second reduction handles.
+
+```{r}
+d <- svid_demo_data()
+svid_equivalence(e, d)
+```
+
+## Why it changes conclusions
+
+If a pool is ranked without collapsing these classes, members of one class
+receive different scores. Since they are mathematically identical, the spread
+between them is a direct measurement of the evaluation procedure's noise floor.
+
+```{r}
+pool <- svid_prune(svid_generate(svid_grammar(c("B", "G", "R", "N"),
+                                              max_depth = 1)), d)
+fit  <- svid_evaluate(pool[1:8], d, n_seeds = 2, baselines = "none")
+svid_stability(fit, d, max_classes = 5)
+```
+
+When the within-class spread approaches the spread across the top of the
+ranking, the ranking is not resolvable at that sample size and the honest
+report is a set of tied families, not a winner.
+
+```{r}
+svid_plot_pareto(svid_pareto(svid_separability(pool, d)))
+```
+
+## The invariance depends on the learner
+
+```{r}
+svid_learner("ranger")$invariance
+svid_learner("lm")$invariance
+```
+
+Set `invariance = "affine"` in `svid_prune()` when the downstream model is
+linear: reciprocals are then *not* equivalent and must be kept apart.

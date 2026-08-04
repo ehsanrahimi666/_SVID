@@ -1,0 +1,68 @@
+---
+title: "Regression targets and SWIR-capable sensors"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Regression targets and SWIR-capable sensors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 4, dpi = 110)
+```
+
+```{r}
+library(svid)
+```
+
+Index discovery is not restricted to classification or to four bands. Here the
+target is leaf area index and the sensor carries shortwave infrared.
+
+```{r}
+sim <- svid_simulate(n = 200, sensor = "landsat8", epochs = 5,
+                     response = "lai", seed = 3)
+sim
+svid_bands(sensor = "landsat8")
+```
+
+```{r}
+pool <- svid_prune(svid_generate(svid_grammar(c("G", "R", "N", "S1", "S2"),
+                                              max_depth = 1)), sim)
+pool
+```
+
+```{r}
+sc <- svid_separability(pool, sim)   # Spearman for regression targets
+head(sc, 5)
+```
+
+```{r}
+fit <- svid_regress(svid_shortlist(sc, 6), sim, n_seeds = 2,
+                    baselines = c("raw_bands", "ndvi"))
+fit
+```
+
+## Portability to another platform
+
+```{r}
+svid_cross_sensor(head(as.character(pool), 5),
+                  from = "landsat8", to = "sentinel2")
+```
+
+## Robustness to radiometric error
+
+```{r}
+svid_perturb(head(as.character(pool), 6), sim, n_rep = 5)
+```
+
+## Physically based screening
+
+With `ccrtm` or `hsdar` installed, `svid_prosail()` ranks indices by their
+sensitivity to a target biophysical variable relative to their contamination by
+confounders such as soil brightness.
+
+```{r, eval = FALSE}
+svid_prosail(head(as.character(pool), 20), target = "LAI",
+             confounders = c("psoil", "Cab"), n = 300, sensor = "landsat8")
+```

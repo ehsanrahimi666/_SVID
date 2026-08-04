@@ -1,0 +1,105 @@
+---
+title: "Discovering spectral indices with svid"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Discovering spectral indices with svid}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 4, dpi = 110)
+```
+
+```{r setup}
+library(svid)
+```
+
+## The data
+
+`andong` holds Sentinel-2A surface reflectance at 1,790 reference points over
+32 dates of 2022, covering rice paddies, pepper fields and plastic-covered
+greenhouses.
+
+```{r}
+data(andong)
+d <- svid_from_table(andong,
+                     bands = c(B = "B02", G = "B03", R = "B04", N = "B08"),
+                     response = "class", id = "point_id", epoch = "date",
+                     coords = c("x", "y"), group = "parcel",
+                     sensor = "sentinel2")
+d
+```
+
+The printout reports two things that matter later: the classes are strongly
+imbalanced, and the 1,790 pixels fall into far fewer independent parcels.
+
+```{r, fig.height = 4.5}
+svid_plot_profiles(d, "(N - R) / (N + R)")
+```
+
+## Generating and pruning a pool
+
+```{r}
+pool <- svid_generate(svid_grammar(d$bands, max_depth = 1))
+pool
+```
+
+Most of those expressions are not distinct features.
+
+```{r}
+pool <- svid_prune(pool, d)   # numerical stages use a 500-sample subsample
+svid_redundancy(pool)
+```
+
+```{r}
+svid_plot_redundancy(pool)
+```
+
+The classes are worth inspecting directly. Every member of a class is the same
+feature written differently, so any difference in their scores is an artefact.
+
+```{r}
+head(attr(pool, "members")[lengths(attr(pool, "members")) > 1], 2)
+```
+
+## Screening, then modelling
+
+Fitting a model per index is wasteful when the pool is large. Screen first.
+
+```{r}
+sc <- svid_separability(pool, d)
+head(sc, 5)
+short <- svid_shortlist(sc, n = 8)
+```
+
+```{r}
+fit <- svid_evaluate(short, d,
+                     resampling = svid_resample(d, "group", folds = 5),
+                     n_seeds = 2, baselines = c("raw_bands", "ndvi"))
+fit
+```
+
+## Inference
+
+A ranking is only meaningful if the differences exceed the noise.
+
+```{r}
+svid_tied(fit)
+```
+
+```{r}
+svid_stability(fit, d, max_classes = 5)
+```
+
+```{r}
+head(svid_compare(fit), 5)
+```
+
+## Reporting
+
+```{r, eval = FALSE}
+res <- svid_result(pool, fit, d)
+svid_report(res, "svid-report.html", pool = pool, fit = fit, data = d)
+```

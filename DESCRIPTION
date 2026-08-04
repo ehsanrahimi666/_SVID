@@ -1,0 +1,35 @@
+Package: svid
+Type: Package
+Title: Systematic Spectral Index Discovery, Deduplication and Validation
+Version: 0.1.0
+Authors@R: c(
+    person("Ehsan", "Rahimi", email = "ehsanrahimi666@gmail.com",
+           role = c("aut", "cre"), comment = c(ORCID = "0000-0000-0000-0000")),
+    person("Chuleui", "Jung", email = "cjung@gknu.ac.kr", role = "aut"))
+Description: A reproducible workflow for discovering spectral indices from
+    multispectral and hyperspectral data. Candidate index expressions are
+    generated from a configurable grammar over standard band symbols, reduced
+    to a non-redundant set by exact symbolic canonicalisation and by detection
+    of monotone-equivalent formulations, screened with fast class-separability
+    statistics, and evaluated under spatially aware resampling with confidence
+    intervals, paired significance tests and mandatory reference baselines.
+    Deduplication before ranking is essential: exhaustively generated pools
+    typically contain two to three times more expressions than distinguishable
+    features, and algebraically identical formulations can receive different
+    accuracies. Supports classification and regression, guided search as an
+    alternative to enumeration, perturbation and cross-sensor robustness
+    testing, radiative-transfer-based screening, raster prediction and
+    publication-quality graphics.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+LazyDataCompression: xz
+Depends: R (>= 4.1.0)
+Imports: stats, utils, grDevices
+Suggests: terra, sf, ranger, randomForest, rpart, ggplot2, scales,
+    data.table, ccrtm, hsdar, knitr, rmarkdown, testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+RoxygenNote: 7.3.1
+URL: https://github.com/ehsanrahimi666/svid
+BugReports: https://github.com/ehsanrahimi666/svid/issues
