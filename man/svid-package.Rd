@@ -36,8 +36,8 @@ across sensors and interoperable with the bundled catalogue. See
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/ehsanrahimi666/svid}
-  \item Report bugs at \url{https://github.com/ehsanrahimi666/svid/issues}
+  \item \url{https://github.com/ehsanrahimi666/_SVID}
+  \item Report bugs at \url{https://github.com/ehsanrahimi666/_SVID/issues}
 }
 
 }

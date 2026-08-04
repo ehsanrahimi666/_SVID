@@ -87,7 +87,7 @@ svid_compare(fit)       # paired McNemar tests against NDVI
 
 ```r
 # install.packages("remotes")
-remotes::install_github("ehsanrahimi666/svid")
+remotes::install_github("ehsanrahimi666/_SVID")
 ```
 
 `terra`, `sf`, `ranger` and `ggplot2` are suggested rather than required: the
@@ -101,32 +101,3 @@ validation of spectral indices in R.
 ## Licence
 
 GPL-3.
-
-## Case study
-
-The package ships the data behind the accompanying paper: 5,163 labelled points
-across the Brazilian Cerrado, seven Landsat-8 bands, 24 sixteen-day composites
-spanning the 2017–2018 crop year, eight land-cover classes.
-
-![Study area](man/figures/study_area.png)
-
-```r
-data(cerrado)
-d <- svid_from_table(cerrado,
-       bands = c(A = "SR_B1", B = "SR_B2", G = "SR_B3", R = "SR_B4",
-                 N = "SR_B5", S1 = "SR_B6", S2 = "SR_B7"),
-       response = "class", id = "point_id", epoch = "date",
-       coords = c("longitude", "latitude"), group = "tile",
-       sensor = "landsat8", scale = 1)
-
-pool <- svid_prune(svid_generate(
-          svid_grammar(c("B","G","R","N","S1","S2"), max_depth = 2, max_terms = 3)), d)
-svid_redundancy(pool)      # 3,960 expressions -> 916 distinguishable features
-
-pc <- svid_per_class(pool, d)        # one index per class
-svid_specialists(pc)                 # what a single all-class index costs
-svid_ensemble(pc, d, compare = c(NDVI = "(N - R) / (N + R)"))
-```
-
-Every class has a different best index, all eight use shortwave infrared, and
-their most discriminating acquisitions are spread across the whole crop year.

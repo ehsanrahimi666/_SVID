@@ -31,5 +31,5 @@ Suggests: terra, sf, ranger, randomForest, rpart, ggplot2, scales,
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1
-URL: https://github.com/ehsanrahimi666/svid
-BugReports: https://github.com/ehsanrahimi666/svid/issues
+URL: https://github.com/ehsanrahimi666/_SVID
+BugReports: https://github.com/ehsanrahimi666/_SVID/issues
