@@ -1,5 +1,6 @@
 ## Build the bundled `cerrado` data set from sitsdata::samples_cerrado_lc8
-e <- new.env(); load("/home/claude/ts/samples_cerrado_lc8.rda", envir = e)
+## Run from the package root; set CERRADO_RDA if samples_cerrado_lc8.rda is elsewhere.
+e <- new.env(); load(Sys.getenv("CERRADO_RDA", file.path("data-raw", "samples_cerrado_lc8.rda")), envir = e)
 x <- get(ls(e)[1], e)
 
 ## drop classes with too few samples to support an interval estimate

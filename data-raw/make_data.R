@@ -1,8 +1,8 @@
 ## Build the bundled data sets. Run from the package root.
-U <- "/mnt/user-data/uploads/"
+U <- Sys.getenv("SVID_RAW", "data-raw")  # folder with the raw input files
 
 ## ---- andong: Sentinel-2A time series, Andong, South Korea -----------------
-p <- read.csv(paste0(U, "andong_reflectance_points.csv"), stringsAsFactors = FALSE)
+p <- read.csv(file.path(U, "andong_reflectance_points.csv"), stringsAsFactors = FALSE)
 p <- p[, c("point_id", "split", "class_name", "x", "y", "date",
            "B02", "B03", "B04", "B08")]
 names(p)[names(p) == "class_name"] <- "class"
